@@ -18,6 +18,11 @@ const initialState = {
         currentPage: 1,
         totalPages: 2
     },
+    byKeyword: {
+        list: [],
+        currentPage: 1,
+        totalPages: 2
+    },
 }
 
 export const fetchLatestArticleList = createAsyncThunk('latestArticle/fetchList',
@@ -162,9 +167,9 @@ const articleSlice = createSlice({
                 }
             })
             .addCase(fetchArticleByKeyword.fulfilled, (state, action) => {
-                state.byCategory = {
+                state.byKeyword = {
                     ...action.payload,
-                    list: [...state.byCategory.list, ...action.payload.list]
+                    list: [...state.byKeyword.list, ...action.payload.list]
                 }
             })
     }

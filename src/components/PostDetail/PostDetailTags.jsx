@@ -11,7 +11,6 @@ function PostDetailTags(
   cate.forEach(function (item) {
     let foundObj = category[item]
     if (foundObj) {
-      console.log(foundObj)
       elmItem.push(<li className="item" key={uuidv4()}>
         <Link to={`/cate/${foundObj.name}`} className="btn btn-default">
           {foundObj.name}

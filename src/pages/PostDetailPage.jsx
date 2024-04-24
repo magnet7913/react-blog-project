@@ -5,7 +5,7 @@ import PostDetailHead from "../components/PostDetail/PostDetailHead"
 import PostDetailSidebar from "../components/PostDetail/PostDetailSidebar"
 import { useDispatch,useSelector } from 'react-redux'
 import { useEffect } from "react"
-import { fetchArticleBySlug } from "../store/articleSlice"
+import { clearRelated, clearSlug, fetchArticleBySlug } from "../store/articleSlice"
 import { fetchCommentList } from "../store/commentSlice"
 
 function PostDetailPage() {
@@ -13,6 +13,8 @@ function PostDetailPage() {
   const params = useParams()
   
   useEffect(() => {
+    dispatch(clearSlug())
+    dispatch(clearRelated())
     dispatch(fetchArticleBySlug(params['*']))
   }, [params['*']])
   

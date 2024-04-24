@@ -7,8 +7,6 @@ import { clearCate, clearRandom, clearRelated, clearSlug } from "../store/articl
 
 function HomePage() {
   const dispatch = useDispatch()
-  dispatch(clearSlug())
-  dispatch(clearRelated())
   dispatch(clearCate())
   dispatch(clearRandom())
 

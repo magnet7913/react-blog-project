@@ -11,15 +11,15 @@ function SearchPage() {
 
   const params = new URLSearchParams(location.search).get('keyword')
   let cateList = useSelector((state) => state.CATEGORY.categoryList)
-  let currentPage = useSelector((state) => state.ARTICLE.byCategory.currentPage);
-  let totalPage = useSelector((state) => state.ARTICLE.byCategory.totalPage);
+  let currentPage = useSelector((state) => state.ARTICLE.byKeyword.currentPage);
+  let totalPage = useSelector((state) => state.ARTICLE.byKeyword.totalPage);
 
   useEffect(() => {
     dispatch(clearCate),
       dispatch(fetchArticleByKeyword([params, 1]))
   }, [params])
 
-  let articleList = useSelector((state) => state.ARTICLE.byCategory.list)
+  let articleList = useSelector((state) => state.ARTICLE.byKeyword.list)
   console.log(params)
   return (
     <div className="articles-list section">
