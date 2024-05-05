@@ -6,12 +6,17 @@ import LoginPage from './pages/LoginPage'
 import PostDetailPage from './pages/PostDetailPage'
 import PostByCategoryPage from './pages/PostByCategory';
 import SearchPage from './pages/SearchPage'
+import LogoutPage from './pages/LogoutPage';
+import RegisterPage from './pages/RegisterPage';
+import RegisterCompletePage from './pages/RegisteredCompletePage';
+
 import { Routes,Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { fetchCategoryList } from './store/categorySlice';
 import { fetchHeaderMenu } from './store/headerMenuSlice';
-
+import { checkLogin } from './store/loginAndRegisterSlice';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
   const dispatch = useDispatch()
@@ -23,6 +28,10 @@ function App() {
   useEffect(() => {
     dispatch(fetchHeaderMenu())
   }, []);
+
+  useEffect(()=>{
+    dispatch(checkLogin())
+  },[])
 
   return (
     <div className="wrapper-content">
@@ -41,9 +50,13 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage></HomePage>}></Route>
         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
-        <Route path="/post/*" element={<PostDetailPage></PostDetailPage>}></Route>
-        <Route path="/cate/*" element={<PostByCategoryPage></PostByCategoryPage>}></Route>
+        <Route path="/post/:slug" element={<PostDetailPage></PostDetailPage>}></Route>
+        <Route path="/cate/:slug" element={<PostByCategoryPage></PostByCategoryPage>}></Route>
         <Route path="/search?" element={<SearchPage></SearchPage>}></Route>
+        <Route path="/logout" element={<LogoutPage></LogoutPage>}></Route>
+        <Route path="/register" element={<RegisterPage></RegisterPage>}></Route>
+        <Route path='/registerComplete' element={<RegisterCompletePage></RegisterCompletePage>}></Route>
+        <Route path='/changePassword' element={<ChangePassword></ChangePassword>}></Route>
 
       </Routes>
       <div className="spacing" />

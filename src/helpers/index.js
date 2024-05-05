@@ -9,7 +9,8 @@ export function mappingArticleData(item) {
         desc: item.excerpt.rendered,
         thumb: item.featured_media_url,
         slug: item.slug,
-        authorId: item.author
+        authorId: item.author,
+        content: item.content.rendered
     }
 }
 
@@ -25,6 +26,16 @@ export function mappingCategoryData(data) {
 
 export function getQueryStr(searchStr) {
     console.log("Ha ha!")
+}
+
+export function mappingDataMenus(item) {
+    const childItems = item.child_items ?? [];
+
+    return {
+        id: item.ID,
+        title: item.title,
+        childItems: childItems.map(mappingDataMenus)
+    }
 }
 
 export function trimResult(obj, object) {
@@ -72,3 +83,6 @@ export function timeAgo(dateString) {
     }
 }
 
+export function handleLogOut(){
+    localStorage.removeItem('user','')
+}

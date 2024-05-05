@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 export default function ArticleItemThumb(
   { thumb, slug }
 ) {
-  let link = "assets/images/blog-1.jpg"
-  if (thumb != false) {
-    link = thumb
-  }
+  let link = thumb ? thumb : "/assets/images/blog-1.jpg"
+  // if (thumb != false) {
+  //   link = thumb
+  // }
   return (
     <div className="article-item__thumbnail">
       <Link to={`/post/${slug}`} className="btn btn-default">

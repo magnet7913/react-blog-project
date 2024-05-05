@@ -11,7 +11,7 @@ const initialState = {
         currentPage: 1,
         totalPages: 0
     },
-    bySlug: [],
+    bySlug: null,
     relatedPost: [],
     byCategory: {
         list: [],
@@ -25,7 +25,9 @@ const initialState = {
     },
 }
 
-export const fetchLatestArticleList = createAsyncThunk('latestArticle/fetchList',
+const name = 'article';
+
+export const fetchLatestArticleList = createAsyncThunk(`${name}/fetchLatestArticleList`,
     async (params, thunkAPI) => {
         try {
             const response = await articleService.getLatest()
@@ -36,7 +38,7 @@ export const fetchLatestArticleList = createAsyncThunk('latestArticle/fetchList'
         }
     })
 
-export const fetchPopularArticleList = createAsyncThunk('popularArticle/fetchList',
+export const fetchPopularArticleList = createAsyncThunk(`${name}/fetchPopularArticleList`,
     async (params, thunkAPI) => {
         try {
             const response = await articleService.getPopular()
@@ -66,9 +68,12 @@ export const fetchArticleBySlug = createAsyncThunk('ArticleSlug/fetchList',
     async (slug, thunkAPI) => {
         try {
             const response = await articleService.getBySlug(slug)
-            const data = response.data.map(mappingArticleData)
+            const data = mappingArticleData(response.data[0]);
+            const responseRelated = await articleService.getByAuthor({exclude: data.id, author: data.authorId});
+            const dataRelated = responseRelated.data.map(mappingArticleData);
             return {
-                data
+                data,
+                dataRelated
             }
         } catch (err) {
             console.log(err)
@@ -76,9 +81,9 @@ export const fetchArticleBySlug = createAsyncThunk('ArticleSlug/fetchList',
     })
 
 export const fetchArticleByAuthor = createAsyncThunk('RelatedPost/fetchList',
-    async (authorID, thunkAPI) => {
+    async (obj, thunkAPI) => {
         try {
-            const response = await articleService.getByAuthor(authorID)
+            const response = await articleService.getByAuthor(obj[0],obj[1])
             const data = response.data.map(mappingArticleData)
             return {
                 data
@@ -91,6 +96,7 @@ export const fetchArticleByAuthor = createAsyncThunk('RelatedPost/fetchList',
 export const fetchArticleByCategory = createAsyncThunk('byCategory/fetchList',
     async (obj, thunkAPI) => {
         try {
+            // gọi api lấy category by slug -> cateId
             const response = await articleService.getByCategory(obj)
             const data = response.data.map(mappingArticleData)
             return {
@@ -121,10 +127,10 @@ export const fetchArticleByKeyword = createAsyncThunk('SearchPost/fetchList',
     })
 
 const articleSlice = createSlice({
-    name: 'article',
+    name,
     initialState,
     reducers: {
-        clearSlug: (state) => {
+        clearSlug: (state) => { // article/clearSlug
             state.bySlug = []
         },
         clearCate: (state) => {
@@ -151,11 +157,13 @@ const articleSlice = createSlice({
             .addCase(fetchRandomArticleList.fulfilled, (state, action) => {
                 state.randomList = {
                     ...action.payload,
-                    list: [...state.randomList.list, ...action.payload.list]
+                    list: action.payload.currentPage === 1 ? [...action.payload.list] : [...state.randomList.list, ...action.payload.list]
                 }
             })
             .addCase(fetchArticleBySlug.fulfilled, (state, action) => {
-                state.bySlug = action.payload
+                state.bySlug = action.payload.data;
+                state.relatedPost = action.payload.dataRelated;
+
             })
             .addCase(fetchArticleByAuthor.fulfilled, (state, action) => {
                 state.relatedPost = action.payload
@@ -163,13 +171,13 @@ const articleSlice = createSlice({
             .addCase(fetchArticleByCategory.fulfilled, (state, action) => {
                 state.byCategory = {
                     ...action.payload,
-                    list: [...state.byCategory.list, ...action.payload.list],
+                    list: action.payload.currentPage === 1 ? [...action.payload.list] : [...state.byCategory.list, ...action.payload.list],
                 }
             })
             .addCase(fetchArticleByKeyword.fulfilled, (state, action) => {
                 state.byKeyword = {
                     ...action.payload,
-                    list: [...state.byKeyword.list, ...action.payload.list]
+                    list: action.payload.currentPage === 1 ? [...action.payload.list] : [...state.byKeyword.list, ...action.payload.list]
                 }
             })
     }

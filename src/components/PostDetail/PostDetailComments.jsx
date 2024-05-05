@@ -11,7 +11,6 @@ function PostDetailComments(
     dispatch(fetchCommentList(postID))
   }, [])
   let commentList = useSelector((state) => state.COMMENT.commentList)
-  console.log(commentList)
   return (
     <div className="post-detail__comments">
       <div className="comments__form">

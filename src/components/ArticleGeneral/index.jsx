@@ -13,7 +13,7 @@ function ArticleGeneral() {
   
   useEffect(() => {
     dispatch(fetchRandomArticleList(1))
-  }, [1])
+  }, [])
 
   return (
     <div className="articles-list section">

@@ -6,10 +6,6 @@ import { useDispatch } from "react-redux";
 import { clearCate, clearRandom, clearRelated, clearSlug } from "../store/articleSlice";
 
 function HomePage() {
-  const dispatch = useDispatch()
-  dispatch(clearCate())
-  dispatch(clearRandom())
-
   return (
     <>
       <ArticleLatest />

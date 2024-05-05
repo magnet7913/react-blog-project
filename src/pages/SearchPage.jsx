@@ -2,25 +2,23 @@ import Button from "../components/shared/Button";
 import ArticleItem from "../components/ArticleItem";
 import MainTitle from "../components/shared/MainTitle";
 import { fetchArticleByKeyword, clearCate } from "../store/articleSlice";
-import { useParams } from "react-router-dom";
+import { useParams,useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from "react"
 
 function SearchPage() {
   const dispatch = useDispatch()
+  let [searchParams] = useSearchParams();
 
-  const params = new URLSearchParams(location.search).get('keyword')
-  let cateList = useSelector((state) => state.CATEGORY.categoryList)
+  const params = searchParams.get('keyword')
   let currentPage = useSelector((state) => state.ARTICLE.byKeyword.currentPage);
-  let totalPage = useSelector((state) => state.ARTICLE.byKeyword.totalPage);
+  let totalPage = useSelector((state) => state.ARTICLE.byKeyword.totalPages);
 
   useEffect(() => {
-    dispatch(clearCate),
-      dispatch(fetchArticleByKeyword([params, 1]))
+    dispatch(fetchArticleByKeyword([params, 1]))
   }, [params])
 
   let articleList = useSelector((state) => state.ARTICLE.byKeyword.list)
-  console.log(params)
   return (
     <div className="articles-list section">
       <div className="tcl-container">

@@ -3,7 +3,7 @@ import cls from 'classnames';
 import IconSearch from '../IconSearch';
 import './input.css';
 
-const Input = forwardRef(({ label, type = 'text', className, icon = <IconSearch />, ...restProps }, ref) => {
+const Input = forwardRef(({ label, type = 'text', className, icon = <IconSearch />, onChange,...restProps }, ref) => {
   const [localType, setLocalType] = useState(type);
 
   function handleToggleShowPwd() {
@@ -24,7 +24,7 @@ const Input = forwardRef(({ label, type = 'text', className, icon = <IconSearch 
     return (
       <div className="input-search">
         {icon}
-        <input ref={ref} className={classesSearch} type={localType} {...restProps} />
+        <input ref={ref} className={classesSearch} type={localType} onChange={onChange} {...restProps} />
       </div>
     );
   }
@@ -33,7 +33,7 @@ const Input = forwardRef(({ label, type = 'text', className, icon = <IconSearch 
     <div className="form-control">
       {label && <label>{label}</label>}
       {type === 'password' && <i className={classesIconPwd} onClick={handleToggleShowPwd}></i>}
-      <input ref={ref} type={localType} className={className} {...restProps} />
+      <input ref={ref} type={localType} className={className} onChange={onChange} {...restProps} />
     </div>
   );
 });

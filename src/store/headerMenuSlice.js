@@ -1,24 +1,26 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {mappingCategoryData} from "../helpers";
+import { mappingDataMenus } from "../helpers";
 import headerMenuService from "../services/headerMenuService";
-import { trimResult } from "../helpers";
 const initialState = {
     header: []
 }
+
 
 export const fetchHeaderMenu = createAsyncThunk('headerMenu/fetchList',
     async (params, thunkAPI) => {
         try {
             const response = await headerMenuService.getAll();
-            const data = trimResult(response.data.items,['title','child_items'])
-            return data
+            // const data = trimResult(response.data.items,['title','child_items'])
+            const data = response.data.items;
+            const dataMapping = data.map(mappingDataMenus);
+            return dataMapping
         } catch (err) {
         }
     })
 
-    
+
 const headerMenuSlice = createSlice({
-    name:'category',
+    name: 'headerMenu',
     initialState,
     reducers: {
 
@@ -30,6 +32,6 @@ const headerMenuSlice = createSlice({
     }
 })
 
-const {actions, reducer} = headerMenuSlice
-export const {} = actions
+const { actions, reducer } = headerMenuSlice
+export const { } = actions
 export default reducer

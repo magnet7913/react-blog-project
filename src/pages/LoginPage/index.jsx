@@ -1,9 +1,41 @@
 import './login.css'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Input from '../../components/shared/Input'
 import Button from '../../components/shared/Button'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginFetch } from '../../store/loginAndRegisterSlice'
 
 function LoginPage() {
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value)
+  }
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value)
+  }
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const handleLogin = (e) => {
+    e.preventDefault()
+    let userCredentials = {
+      username,password
+    }
+    dispatch(loginFetch(userCredentials)).then((result)=>{
+      if(result.payload){
+        setUsername("")
+        setPassword("")
+        navigate('/')
+      }
+    })
+  }
+
+  const {error} = useSelector((state)=>state.LOGIN)
+
   return (
     <main className="login">
       <div className="spacing" />
@@ -12,17 +44,19 @@ function LoginPage() {
           <div className="tcl-col-12 tcl-col-sm-6 block-center">
             <h1 className="form-title text-center">Đăng nhập</h1>
             <div className="form-login-register">
-              <form autoComplete="off">
+              <form autoComplete="off" onSubmit={handleLogin}>
                 <Input 
                   label="Tên đăng nhập" 
                   placeholder="Nhập tên đăng nhập ..."
                   autoComplete="off"
+                  onChange = {handleUsernameChange}
                 />
                 <Input 
                   type="password" 
                   label="Mật khẩu" 
                   placeholder="Nhập mật khẩu của bạn ..."
                   autoComplete="new-password"
+                  onChange = {handlePasswordChange}
                 />
 
                 <div className="d-flex tcl-jc-between tcl-ais-center">
@@ -31,6 +65,9 @@ function LoginPage() {
                 </div>
               </form>
             </div>
+            
+            {error && (<div className='alert' role='alert'>{error}</div>)}
+            
           </div>
         </div>
       </div>

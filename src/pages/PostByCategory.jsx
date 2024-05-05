@@ -8,19 +8,21 @@ import { useEffect } from "react"
 
 function PostByCategoryPage() {
   const dispatch = useDispatch()
-  const params = useParams()
-  
+  const { slug } = useParams()
+
   let cateList = useSelector((state) => state.CATEGORY.categoryList)
-  let cateID = Object.keys(cateList).find(key => cateList[key].name === params['*'])
+  let cateID = Object.keys(cateList).find(key => cateList[key].name === slug)
   let currentPage = useSelector((state) => state.ARTICLE.byCategory.currentPage);
   let totalPage = useSelector((state) => state.ARTICLE.byCategory.totalPage);
+
+  console.log('currentPage', currentPage);
+  console.log('totalPage', totalPage);
 
   // window.addEventListener('beforeunload', dispatch(clearCate()))
 
   useEffect(() => {
-    dispatch(clearCate),
-    dispatch(fetchArticleByCategory([cateID, 1]))
-  }, [cateID])
+    dispatch(fetchArticleByCategory([slug, 1]))
+  }, [slug])
 
   let articleList = useSelector((state) => state.ARTICLE.byCategory.list)
 
@@ -28,7 +30,7 @@ function PostByCategoryPage() {
     <div className="articles-list section">
       <div className="tcl-container">
 
-        <MainTitle type="search">Các bài viết thuộc danh mục "{params["*"]}"</MainTitle>
+        <MainTitle type="search">Các bài viết thuộc danh mục "{slug}"</MainTitle>
 
         <div className="tcl-row tcl-jc-center">
 
@@ -45,12 +47,11 @@ function PostByCategoryPage() {
           })}
 
         </div>
-
-        <div className="text-center">
-          <Button type="primary" size="large" loading={false} onClick={() => dispatch(fetchArticleByCategory([cateID, currentPage + 1]))}>
+        {currentPage < totalPage && <div className="text-center">
+          <Button type="primary" size="large" loading={false} onClick={() => dispatch(fetchArticleByCategory([slug, currentPage + 1]))}>
             Tải thêm
           </Button>
-        </div>
+        </div>}
       </div>
     </div>
 

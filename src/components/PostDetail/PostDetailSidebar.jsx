@@ -5,22 +5,16 @@ import { useDispatch,useSelector } from 'react-redux'
 import { useEffect } from "react"
 
 function PostDetailSidebar(
-  {author,authorID}
+  {author,authorID,postID}
 ) {
   const dispatch = useDispatch()
   
-  useEffect(() => {
-    dispatch(fetchArticleByAuthor(authorID))
-  }, [])
+  // useEffect(() => {
+  //   dispatch(fetchArticleByAuthor([authorID,postID]))
+  // }, [])
 
-  const data = useSelector((state) => {
-    const articleData = state.ARTICLE.relatedPost.data;
-    return articleData && articleData.length > 0 ? articleData : null;
-  });
+  const data = useSelector((state) => state.ARTICLE.relatedPost);
 
-  if (!data) {
-    return null;
-  }
 
   return (
     <div className="post-detail__side">
