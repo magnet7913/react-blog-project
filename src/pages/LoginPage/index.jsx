@@ -7,28 +7,27 @@ import { useDispatch, useSelector } from 'react-redux'
 import { loginFetch } from '../../store/loginAndRegisterSlice'
 
 function LoginPage() {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value)
-  }
+  const [formData, setFormData] = useState({
+    username: "",
+    password: ""
+  })
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value)
+  const handleFormChange = (e) => {
+    setFormData({...formData,
+      [e.target.name]: e.target.value}
+    )
   }
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleLogin = (e) => {
     e.preventDefault()
-    let userCredentials = {
-      username,password
-    }
-    dispatch(loginFetch(userCredentials)).then((result)=>{
+
+
+    dispatch(loginFetch(formData)).then((result)=>{
       if(result.payload){
-        setUsername("")
-        setPassword("")
+        console.log('loginFetch success before navigate');
         navigate('/')
       }
     })
@@ -49,14 +48,16 @@ function LoginPage() {
                   label="Tên đăng nhập" 
                   placeholder="Nhập tên đăng nhập ..."
                   autoComplete="off"
-                  onChange = {handleUsernameChange}
+                  name='username'
+                  onChange = {handleFormChange}
                 />
                 <Input 
                   type="password" 
                   label="Mật khẩu" 
                   placeholder="Nhập mật khẩu của bạn ..."
                   autoComplete="new-password"
-                  onChange = {handlePasswordChange}
+                  name='password'
+                  onChange = {handleFormChange}
                 />
 
                 <div className="d-flex tcl-jc-between tcl-ais-center">

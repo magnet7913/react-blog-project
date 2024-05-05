@@ -38,6 +38,13 @@ export function mappingDataMenus(item) {
     }
 }
 
+export function mappingUserData(item) {
+    return {
+        displayName: item.name,
+        username: item.user_name,
+    }
+}
+
 export function trimResult(obj, object) {
     if (Array.isArray(obj)) {
         return obj.map(item => trimResult(item, object));

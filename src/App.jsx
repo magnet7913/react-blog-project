@@ -10,12 +10,12 @@ import LogoutPage from './pages/LogoutPage';
 import RegisterPage from './pages/RegisterPage';
 import RegisterCompletePage from './pages/RegisteredCompletePage';
 
-import { Routes,Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchCategoryList } from './store/categorySlice';
 import { fetchHeaderMenu } from './store/headerMenuSlice';
-import { checkLogin } from './store/loginAndRegisterSlice';
+import { currentUserFetch } from './store/loginAndRegisterSlice';
 import ChangePassword from './pages/ChangePassword';
 
 function App() {
@@ -29,9 +29,9 @@ function App() {
     dispatch(fetchHeaderMenu())
   }, []);
 
-  useEffect(()=>{
-    dispatch(checkLogin())
-  },[])
+  useEffect(() => {
+    dispatch(currentUserFetch())
+  }, [])
 
   return (
     <div className="wrapper-content">

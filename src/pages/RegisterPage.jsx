@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import Input from '../components/shared/Input'
 import Button from '../components/shared/Button'
 import { useState } from 'react'
-import { useDispatch,useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { registerFetch } from '../store/loginAndRegisterSlice'
 
 function RegisterPage() {
@@ -11,30 +11,24 @@ function RegisterPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const [display_name, setDisplayName] = useState("")
-  const [email, setEmail] = useState("")
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const {error} = useSelector((state)=>state.LOGIN)
+  const [formData, setFormData] = useState({
+    display_name: "",
+    email: "",
+    username: "",
+    password: "",
+  })
 
 
-  const handleDisplayNameChange = (e) => {
-    setDisplayName(e.target.value)
-  }
+  const { error } = useSelector((state) => state.LOGIN)
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value)
-  }
-
-
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value)
-  }
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value)
+  const handleFormChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    }
+    )
   }
 
   const handleConfirmPassword = (e) => {
@@ -43,9 +37,8 @@ function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    let userCredentials = {display_name, email, username, password}
-    dispatch(registerFetch(userCredentials)).then((result)=>{if (result.type === "user/register/fulfilled") {navigate('/registerComplete')}}, 
-      )
+    dispatch(registerFetch(formData)).then((result) => { if (result.type === "user/register/fulfilled") { navigate('/registerComplete') } },
+    )
   }
   return (
     <main className="login">
@@ -60,26 +53,30 @@ function RegisterPage() {
                   label="Tên hiển thị"
                   placeholder="Nhập tên hiển thị"
                   autoComplete="off"
-                  onChange={handleDisplayNameChange}
+                  name="display_name"
+                  onChange={handleFormChange}
                 />
                 <Input
                   label="Email"
                   placeholder="Nhập Email"
                   autoComplete="off"
-                  onChange={handleEmailChange}
+                  name="email"
+                  onChange={handleFormChange}
                 />
                 <Input
                   label="Tên đăng nhập"
                   placeholder="Nhập tên đăng nhập ..."
                   autoComplete="off"
-                  onChange={handleUsernameChange}
+                  name="username"
+                  onChange={handleFormChange}
                 />
                 <Input
                   type="password"
                   label="Mật khẩu"
                   placeholder="Nhập mật khẩu của bạn ..."
                   autoComplete="new-password"
-                  onChange={handlePasswordChange}
+                  name="password"
+                  onChange={handleFormChange}
                 />
                 <Input
                   type="password"
@@ -93,7 +90,7 @@ function RegisterPage() {
                   <Link to="/login">Bạn đã có tài khoản?</Link>
                 </div>
               </form>
-              {password && confirmPassword && password !== confirmPassword && (
+              {formData.password && confirmPassword && formData.password !== confirmPassword && (
                 <div className='alert' role='alert'>Mật khẩu không trùng khớp!</div>
               )}
               {error && (<div className='alert' role='alert'>{error}</div>)}

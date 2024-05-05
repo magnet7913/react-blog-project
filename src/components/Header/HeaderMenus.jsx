@@ -25,7 +25,7 @@ function HeaderMenus() {
   const handleLogOut = (e) => {
     e.preventDefault()
     dispatch(logout())
-    navigate('/logout')
+    navigate('/')
   }
 
   return (
@@ -40,13 +40,13 @@ function HeaderMenus() {
         <ul className="header-nav__lists">
           <li className="user">
             {value ? (<>
-              <Link to={"/"}><i className="icons ion-person" /> {value.user_display_name}</Link>
+              <Link to={"/"}><i className="icons ion-person" /> {value.displayName}</Link>
                 <ul>  
                   <li>
                     <Link to={"/changePassword"} >Đổi mật khẩu</Link>
                   </li>      
                   <li>
-                    <Link to={"/logout"} onClick={handleLogOut}>Log Out</Link>
+                    <Link to={"/"} onClick={handleLogOut}>Log Out</Link>
                   </li>            
                 </ul>
               </>
