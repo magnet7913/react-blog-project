@@ -15,7 +15,7 @@ function PostDetailComments(
 
   useEffect(() => {
     dispatch(fetchCommentList([postID, 1]))
-  }, [])
+  }, [postID])
   let comment = useSelector((state) => state.COMMENT.commentList)
   let totalComment = useSelector((state) => state.COMMENT.totalComments)
 

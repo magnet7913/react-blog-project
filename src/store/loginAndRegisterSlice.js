@@ -47,6 +47,12 @@ export const currentUserFetch = createAsyncThunk('user/check',
     }
 )
 
+export const changePassword = createAsyncThunk('user/changePassword',
+    async (obj, thunkAPI) => {
+        const response = await loginAndRegisterService.changePassword(obj[0],obj[1])
+        return response
+})
+
 const loginSlice = createSlice({
     name: 'login',
     initialState,
@@ -99,6 +105,12 @@ const loginSlice = createSlice({
             })
             .addCase(currentUserFetch.fulfilled, (state, action) => {
                 state.user = action.payload
+            })
+            .addCase(changePassword.fulfilled, (state, action) => {
+                
+            })
+            .addCase(changePassword.rejected, (state,action) => {
+                if (action.error.message === 'Request failed with status code 400') { state.error = "Sai mật khẩu cũ hoặc mật khẩu mới trùng lặp " }
             })
     }
 })

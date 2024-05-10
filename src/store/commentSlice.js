@@ -10,13 +10,14 @@ const initialState = {
 export const fetchCommentList = createAsyncThunk('comment/fetchList',
     async (obj, thunkAPI) => {
         try {
-            const response = await commentService.getComment(obj[0], obj[1], obj[2]);
+            const response = await commentService.getComment(obj[0], obj[1]);
             const data = response.data.map(mappingCommentData)
             return {
                 commentList: data,
                 currentPage: obj[1],
                 totalPages: parseInt(response.headers["x-wp-totalpages"]),
                 totalComments: parseInt(response.headers["x-wp-total"]),
+                postID: obj[0]
             }
         } catch (err) {
         }
@@ -50,6 +51,7 @@ const commentSlice = createSlice({
             state.currentPage = action.payload.currentPage;
             state.totalPages = action.payload.totalPages
             state.totalComments = action.payload.totalComments
+            state.postID = action.payload.postID
         })
             .addCase(fetchChildComment.fulfilled, (state, action) => {
                 let index = state.commentList.findIndex(obj => obj.id === action.payload.commentList[0].parent)

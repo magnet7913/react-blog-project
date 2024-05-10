@@ -4,12 +4,13 @@ import Input from '../components/shared/Input'
 import Button from '../components/shared/Button'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { loginFetch } from '../store/loginAndRegisterSlice'
+import { changePassword, logout } from '../store/loginAndRegisterSlice'
 
 function ChangePassword() {
-  const [oldPassword, setOldPassword] = useState("")
+  const [password, setOldPassword] = useState("")
   const [new_password, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [confirm_new_password, setConfirmPassword] = useState('')
+  let token = localStorage.getItem('token')
 
   const handleOldPassChange = (e) => {
     setOldPassword(e.target.value)
@@ -25,13 +26,15 @@ function ChangePassword() {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const handleLogin = (e) => {
+  const handleChangePassword = (e) => {
     e.preventDefault()
     let userCredentials = {
-      username, password
+      password, new_password, confirm_new_password
     }
-    dispatch(loginFetch(userCredentials)).then((result) => {
+
+    dispatch(changePassword([token,userCredentials])).then((result) => {
       if (result.payload) {
+        dispatch(logout())
         navigate('/login')
       }
     })
@@ -47,7 +50,7 @@ function ChangePassword() {
           <div className="tcl-col-12 tcl-col-sm-6 block-center">
             <h1 className="form-title text-center">Đổi mật khẩu</h1>
             <div className="form-login-register">
-              <form autoComplete="off" onSubmit={handleLogin}>
+              <form autoComplete="off" onSubmit={handleChangePassword}>
                 <Input
                   type="password"
                   label="Mật khẩu cũ"

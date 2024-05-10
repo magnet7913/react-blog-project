@@ -27,7 +27,6 @@ function LoginPage() {
 
     dispatch(loginFetch(formData)).then((result)=>{
       if(result.payload){
-        console.log('loginFetch success before navigate');
         navigate('/')
       }
     })

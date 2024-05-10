@@ -1,4 +1,3 @@
-import ChangePassword from "../pages/ChangePassword";
 import API from "./API";
 
 const loginAndRegisterService = {
@@ -10,8 +9,8 @@ const loginAndRegisterService = {
         return API.callWithToken(token).get("wp/v2/users/me?token")
     },
 
-    changePassword(token) {
-
+    changePassword(token,userCredentials) {
+        return API.callWithToken(token).put("wp/v2/users/password",userCredentials)
     },
 
     newRegister(userCredentials) {

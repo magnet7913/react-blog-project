@@ -1,14 +1,13 @@
 import './related-posts.css';
 import { timeAgo } from '../../helpers';
+import { Link } from 'react-router-dom';
 
 function ArticleRelated(
   {item}
 ) {
   return (
     <article className="related-post__card">
-      <a href="/" className="related-post__title">
-        {item.title}
-      </a>
+      <Link to={`/post/${item.slug}`} className="related-post__title">{item.title}</Link>
       <div className="related-post__info">
         <a className="related-post__author" href="/">
           {item.author.nickname}
