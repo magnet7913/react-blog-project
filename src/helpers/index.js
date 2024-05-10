@@ -22,7 +22,19 @@ export function mappingCategoryData(data) {
     return tempData
 }
 
-
+export function mappingCommentData(item) {
+    return {
+        id: item.id,
+        parent: item.parent,
+        author: item.author_name,
+        authorAvatar: item.author_avatar_urls,
+        date: item.date,
+        content: item.content.rendered,
+        replyCount: item.comment_reply_count,
+        childComment: [],
+        currentPage: 0
+    }
+}
 
 export function getQueryStr(searchStr) {
     console.log("Ha ha!")
@@ -42,6 +54,7 @@ export function mappingUserData(item) {
     return {
         displayName: item.name,
         username: item.user_name,
+        avatar: item.avatar_urls[96]
     }
 }
 

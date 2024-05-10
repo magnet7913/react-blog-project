@@ -2,151 +2,52 @@ import './comments.css';
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from "react"
 import { fetchCommentList } from '../../store/commentSlice';
+import Button from '../shared/Button';
+import CommentContent from './CommentContent';
 
 function PostDetailComments(
   { postID }
 ) {
   const dispatch = useDispatch()
+  let currentPage = useSelector((state) => state.COMMENT.currentPage);
+  let totalPages = useSelector((state) => state.COMMENT.totalPages);
+  let avatar = useSelector((state)=> state.LOGIN.user.avatar)
+
   useEffect(() => {
-    dispatch(fetchCommentList(postID))
+    dispatch(fetchCommentList([postID, 1]))
   }, [])
-  let commentList = useSelector((state) => state.COMMENT.commentList)
+  let comment = useSelector((state) => state.COMMENT.commentList)
+  let totalComment = useSelector((state) => state.COMMENT.totalComments)
+
   return (
     <div className="post-detail__comments">
       <div className="comments__form">
         <div className="comments__form--control">
           <div className="comments__section--avatar">
             <a href="/">
-              <img src="/assets/images/avatar1.jpg" alt="" />
+              <img src={avatar} alt="" />
             </a>
           </div>
           <textarea />
         </div>
         <div className="text-right">
-          <button className="btn btn-default">Submit</button>
+          <button className="btn btn-default">Gửi bình luận</button>
         </div>
       </div>
-      <p>20 Comments</p>
+      <p>{totalComment} bình luận</p>
       <ul className="comments">
-        {/* Comment 1 */}
-        <li className="item">
-          <div className="comments__section">
-            <div className="comments__section--avatar">
-              <a href="/">
-                <img src="/assets/images/avatar1.jpg" alt="" />
-              </a>
-            </div>
-            <div className="comments__section--content">
-              <a href="/" className="comments__section--user">
-                John Smith
-              </a>
-              <p className="comments__section--time">2 minutes ago</p>
-              <p className="comments__section--text">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nesciunt sequi odit exercitationem maiores,
-                iusto unde quibusdam! Ullam nisi iste reprehenderit, expedita nam ad. Nisi hic at voluptate sint
-                incidunt aut?
-              </p>
-              {/* <i class="ion-reply comments__section--reply"></i> */}
-            </div>
-          </div>
-          {/* Reply Comments */}
-          <ul className="comments">
-            <li className="item">
-              <div className="comments__section">
-                <div className="comments__section--avatar">
-                  <a href="/">
-                    <img src="/assets/images/avatar3.jpg" alt="" />
-                  </a>
-                </div>
-                <div className="comments__section--content">
-                  <a href="/" className="comments__section--user">
-                    John Smith
-                  </a>
-                  <p className="comments__section--time">2 minutes ago</p>
-                  <p className="comments__section--text">Lorem ipsum dolor sit, amet consectetur adipisicing elit?</p>
-                  {/* <i class="ion-reply comments__section--reply"></i> */}
-                </div>
-              </div>
-            </li>
-            <li className="item">
-              <div className="comments__section">
-                <div className="comments__section--avatar">
-                  <a href="/">
-                    <img src="/assets/images/avatar4.jpg" alt="" />
-                  </a>
-                </div>
-                <div className="comments__section--content">
-                  <a href="/" className="comments__section--user">
-                    John Smith
-                  </a>
-                  <p className="comments__section--time">2 minutes ago</p>
-                  <p className="comments__section--text">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nesciunt sequi odit exercitationem ma?
-                  </p>
-                  {/* <i class="ion-reply comments__section--reply"></i> */}
-                </div>
-              </div>
-            </li>
-          </ul>
-          {/* Reply form */}
-          <div className="comments__form">
-            <div className="comments__form--control">
-              <div className="comments__section--avatar">
-                <a href="/">
-                  <img src="/assets/images/avatar1.jpg" alt="" />
-                </a>
-              </div>
-              <textarea />
-            </div>
-            <div className="text-right">
-              <button className="btn btn-default">Submit</button>
-            </div>
-          </div>
-        </li>
-        {/* Comment 2 */}
-        <li className="item">
-          <div className="comments__section">
-            <div className="comments__section--avatar">
-              <a href="/">
-                <img src="/assets/images/avatar2.jpg" alt="" />
-              </a>
-            </div>
-            <div className="comments__section--content">
-              <a href="/" className="comments__section--user">
-                John Smith
-              </a>
-              <p className="comments__section--time">2 minutes ago</p>
-              <p className="comments__section--text">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nesciunt sequi odit exercitationem maiores?
-              </p>
-              {/* <i class="ion-reply comments__section--reply"></i> */}
-            </div>
-          </div>
-          <div className="comments__hidden">
-            <a href="/">
-              <i className="icons ion-ios-undo" /> Xem thêm 2 câu trả lời
-            </a>
-          </div>
-        </li>
-        {/* Comment 3 */}
-        <li className="item">
-          <div className="comments__section">
-            <div className="comments__section--avatar">
-              <a href="/">
-                <img src="/assets/images/avatar3.jpg" alt="" />
-              </a>
-            </div>
-            <div className="comments__section--content">
-              <a href="/" className="comments__section--user">
-                John Smith
-              </a>
-              <p className="comments__section--time">2 minutes ago</p>
-              <p className="comments__section--text">Lorem ipsum dolor sit, amet?</p>
-              {/* <i class="ion-reply comments__section--reply"></i> */}
-            </div>
-          </div>
-        </li>
+        {comment.map(item => (
+          <li className="item" key={item.id}>
+            <CommentContent item={item} postID={postID} avatar={avatar} />
+          </li>
+        ))}
       </ul>
+      {currentPage < totalPages && <div className="text-center">
+        <Button type="primary" size="large" loading={false} onClick={() => dispatch(fetchCommentList([postID, currentPage + 1]))}>
+          Tải thêm bình luận
+        </Button>
+      </div>}
+
     </div>
   );
 }
