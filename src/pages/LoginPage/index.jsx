@@ -2,11 +2,20 @@ import './login.css'
 import { Link, useNavigate } from "react-router-dom"
 import Input from '../../components/shared/Input'
 import Button from '../../components/shared/Button'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginFetch } from '../../store/loginAndRegisterSlice'
 
 function LoginPage() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  let token = localStorage.getItem('token')
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  }, [token]);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -19,8 +28,7 @@ function LoginPage() {
     )
   }
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+
   const handleLogin = (e) => {
     e.preventDefault()
 

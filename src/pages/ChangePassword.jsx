@@ -2,15 +2,26 @@ import './LoginPage/login.css'
 import { Link, useNavigate } from "react-router-dom"
 import Input from '../components/shared/Input'
 import Button from '../components/shared/Button'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { changePassword, logout } from '../store/loginAndRegisterSlice'
 
 function ChangePassword() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  let token = localStorage.getItem('token')
+  useEffect(() => {
+    if (token === null) {
+      navigate('/');
+    }
+  }, [token]);
+
   const [password, setOldPassword] = useState("")
   const [new_password, setNewPassword] = useState("")
   const [confirm_new_password, setConfirmPassword] = useState('')
-  let token = localStorage.getItem('token')
+
+
 
   const handleOldPassChange = (e) => {
     setOldPassword(e.target.value)
@@ -24,8 +35,7 @@ function ChangePassword() {
     setConfirmPassword(e.target.value);
   }
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+
   const handleChangePassword = (e) => {
     e.preventDefault()
     let userCredentials = {
