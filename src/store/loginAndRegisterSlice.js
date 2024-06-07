@@ -6,7 +6,7 @@ const initialState = {
     isLogin: false,
     token: localStorage.getItem('token'),
     user: null,
-    error: null
+    error: null,
 }
 
 export const loginFetch = createAsyncThunk('user/login',

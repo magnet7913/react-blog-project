@@ -9,6 +9,7 @@ import SearchPage from './pages/SearchPage'
 import LogoutPage from './pages/LogoutPage';
 import RegisterPage from './pages/RegisterPage';
 import RegisterCompletePage from './pages/RegisteredCompletePage';
+import AdminPanel from './pages/AdminPage';
 
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { fetchCategoryList } from './store/categorySlice';
 import { fetchHeaderMenu } from './store/headerMenuSlice';
 import { currentUserFetch } from './store/loginAndRegisterSlice';
-import ChangePassword from './pages/ChangePassword';
+
 
 function App() {
   const dispatch = useDispatch()
@@ -56,7 +57,7 @@ function App() {
         <Route path="/logout" element={<LogoutPage></LogoutPage>}></Route>
         <Route path="/register" element={<RegisterPage></RegisterPage>}></Route>
         <Route path='/registerComplete' element={<RegisterCompletePage></RegisterCompletePage>}></Route>
-        <Route path='/changePassword' element={<ChangePassword></ChangePassword>}></Route>
+        <Route path='/admin' element={<AdminPanel></AdminPanel>}></Route>
 
       </Routes>
       <div className="spacing" />

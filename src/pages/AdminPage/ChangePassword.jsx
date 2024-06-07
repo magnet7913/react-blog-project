@@ -1,10 +1,10 @@
-import './LoginPage/login.css'
+import '../LoginPage/login.css'
 import { Link, useNavigate } from "react-router-dom"
-import Input from '../components/shared/Input'
-import Button from '../components/shared/Button'
+import Input from '../../components/shared/Input'
+import Button from '../../components/shared/Button'
 import { useState,useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { changePassword, logout } from '../store/loginAndRegisterSlice'
+import { changePassword, logout } from '../../store/loginAndRegisterSlice'
 
 function ChangePassword() {
   const dispatch = useDispatch()
@@ -53,7 +53,7 @@ function ChangePassword() {
   const { error } = useSelector((state) => state.LOGIN)
 
   return (
-    <main className="login">
+    <main className="login" style={{ width: '-webkit-fill-available' }}>
       <div className="spacing" />
       <div className="tcl-container">
         <div className="tcl-row">

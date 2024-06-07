@@ -3,6 +3,7 @@ import IconLoading from '../IconLoading';
 import './button.css';
 
 function Button({
+  id,
   type = 'default',
   loading,
   loadingPos = 'left',
@@ -33,6 +34,7 @@ function Button({
   );
 
   const injectedProps = {
+    id,
     className: classes,
     type: htmlType,
     ...restProps,

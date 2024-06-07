@@ -3,18 +3,35 @@ import { timeAgo } from '../../helpers';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChildComment } from '../../store/commentSlice';
+import { fetchPostReply } from '../../store/commentSlice';
 
 function CommentContent(
-    { item, postID, avatar }
+    { item, postID, avatar, hidden, authorID }
 ) {
     const [showForm, setShowForm] = useState(true);
     const dispatch = useDispatch()
     let currentPage = item.currentPage;
     let totalPage = item.childTotalPages
+    let token = localStorage.getItem('token')
     let isShowButton = true
     if (currentPage === totalPage) {
         isShowButton = false
     }
+    const [commentText, setCommentText] = useState('');
+    const [commentParent, setCommentParent] = useState('');
+    const handleInputChange = (event) => {
+        setCommentText(event.target.value);
+        setCommentParent(event.target.className)
+    };
+    const handleSubmitReply = () => {
+        dispatch(fetchPostReply([token, { author: authorID, content: commentText, post: postID, parent: commentParent }])).then((result) => {
+            if (result.payload) {
+
+            }
+        })
+        setCommentText("")
+    };
+
     return (
         <>
             <div className="comments__section">
@@ -28,20 +45,24 @@ function CommentContent(
                     <a href="/" className="comments__section--user">
                         {item.author}
                     </a>
-                    <p className="comments__section--time">{timeAgo(item.date)}</p>
+                    <p className="comments__section--time">{timeAgo(item.date)} ID {item.id}</p>
+
                     {(item.replyCount > 0) && (item.parent === 0) &&
                         <div className="comments__section--time" > có {item.replyCount} trả lời</div>}
+
                     <p className="comments__section--text" dangerouslySetInnerHTML={{ __html: item.content }} />
+
                     {isShowButton && (item.replyCount > 0) && (item.parent === 0) && <button className="btn btn-default"
                         style={{ marginTop: 0.5 + "rem" }}
                         onClick={() => dispatch(fetchChildComment([postID, currentPage + 1, item.id]))}>
                         Tải trả lời
                     </button>}
+
                 </div>
 
                 {/* Answer button */}
                 <div>
-                    <div className="text-right">
+                    <div className="text-right" hidden={hidden}>
                         <button className="btn btn-default" onClick={() => setShowForm(!showForm)}>Trả lời</button>
                     </div>
                 </div>
@@ -67,21 +88,20 @@ function CommentContent(
                         </div>
                     </li>))}
                 </ul>
-            </div>
-
-            {/* Reply form */}
-            <div className="comments__form" hidden={showForm}>
-                <div className="comments__form--control">
-                    <div className="comments__section--avatar">
-                        <a href="/">
-                            <img src={avatar} alt="" />
-                        </a>
+                {/* Reply form */}
+                <div className="comments__form" hidden={showForm}>
+                    <div className="comments__form--control">
+                        <div className="comments__section--avatar">
+                            <a href="/">
+                                <img src={avatar} alt="" />
+                            </a>
+                        </div>
+                        <textarea onChange={handleInputChange} value={commentText} className={item.id}/>
                     </div>
-                    <textarea />
-                </div>
 
-                <div className="text-right">
-                    <button className="btn btn-default">Submit</button>
+                    <div className="text-right">
+                        <button className="btn btn-default" onClick={handleSubmitReply} >Gửi trả lời</button>
+                    </div>
                 </div>
             </div>
         </>

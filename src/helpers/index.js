@@ -16,7 +16,7 @@ export function mappingArticleData(item) {
 
 export function mappingCategoryData(data) {
     let tempData = data.reduce((acc, cur) => {
-        acc[cur.id] = { ID: cur.id, name: cur.name }
+        acc[cur.id] = { ID: cur.id, name: cur.name, desc: cur.description , parent: cur.parent}
         return acc
     }, {})
     return tempData
@@ -54,7 +54,11 @@ export function mappingUserData(item) {
     return {
         displayName: item.name,
         username: item.user_name,
-        avatar: item.avatar_urls[96]
+        avatar: item.simple_local_avatar[96],
+        firstName: item.first_name,
+        lastName: item.last_name,
+        nickname: item.nickname,
+        description: item.description
     }
 }
 

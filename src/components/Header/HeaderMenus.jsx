@@ -43,7 +43,7 @@ function HeaderMenus() {
               <Link to={"/"}><i className="icons ion-person" /> {value.displayName}</Link>
                 <ul>  
                   <li>
-                    <Link to={"/changePassword"} >Đổi mật khẩu</Link>
+                    <Link to={"/admin"} >Admin Panel</Link>
                   </li>      
                   <li>
                     <Link to={"/"} onClick={handleLogOut}>Log Out</Link>
