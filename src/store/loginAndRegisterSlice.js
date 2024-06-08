@@ -53,6 +53,12 @@ export const changePassword = createAsyncThunk('user/changePassword',
         return response
 })
 
+export const fetchChangeUserDetail = createAsyncThunk('user/changeDetail',
+    async (obj, thunkAPI) => {
+        const response = await loginAndRegisterService.changeUserDetail(obj[0],obj[1])
+        return response
+})
+
 const loginSlice = createSlice({
     name: 'login',
     initialState,

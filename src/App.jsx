@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { fetchCategoryList } from './store/categorySlice';
 import { fetchHeaderMenu } from './store/headerMenuSlice';
 import { currentUserFetch } from './store/loginAndRegisterSlice';
+import { fetchPostList } from './store/articleSlice';
 
 
 function App() {
@@ -32,6 +33,10 @@ function App() {
 
   useEffect(() => {
     dispatch(currentUserFetch())
+  }, [])
+
+  useEffect(() => {
+    dispatch(fetchPostList())
   }, [])
 
   return (

@@ -1,3 +1,4 @@
+import ChangeUserDetail from "../pages/AdminPage/ChangeUserDetail";
 import API from "./API";
 
 const loginAndRegisterService = {
@@ -15,7 +16,12 @@ const loginAndRegisterService = {
 
     newRegister(userCredentials) {
         return API.call().post(`wp/v2/users/register`,userCredentials);
-    }
+    },
+
+    changeUserDetail(token,userCredentials) {
+        return API.callWithToken(token).put("wp/v2/users/me",userCredentials)
+    },
+
 }
 
 export default loginAndRegisterService;

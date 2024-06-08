@@ -35,6 +35,9 @@ const articleService = {
     getByKeyword(both) {
         return API.call().get(`/wp/v2/posts?per_page=2&page=${both[1]}&search=${both[0]}&lang=vi`)
     },
+    getPostList(page) {
+        return API.call().get(`/wp/v2/posts?per_page=10&page=${page}`)
+    }
 }
 
 export default articleService;

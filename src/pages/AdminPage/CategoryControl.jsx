@@ -46,11 +46,11 @@ function CategoryControl() {
         const item = categoryList.find(item => item.ID === Number(id))
         setForm({
             name: item.name,
-            description: item.description,
+            description: item.desc,
             parent: item.parent,
         })
+        
     }
-
 
     function handleDelete(e) {
         e.preventDefault()
@@ -60,6 +60,16 @@ function CategoryControl() {
             }
         })
     }
+
+    useEffect(() => {
+        if (form.parent !== 0 && form.parent !== "") {
+            setShowDropdown(true)
+            let selectElement = document.getElementById("pickParent")
+            if (selectElement) {
+                selectElement.value = form.parent
+            }
+        } else if (form.parent === 0) {setShowDropdown(false)}
+    }, [form.parent])
 
     return (
         <main className="login" style={{ width: '-webkit-fill-available' }}>

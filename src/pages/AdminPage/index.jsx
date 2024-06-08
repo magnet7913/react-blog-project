@@ -6,6 +6,7 @@ import { Layout, Button, Input } from 'antd';
 import CategoryControl from './CategoryControl';
 import ChangePassword from './ChangePassword';
 import ChangeUserDetail from './ChangeUserDetail';
+import ArticleManagement from './ArticleManagement';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -30,6 +31,7 @@ function AdminPanel() {
         <Button block style={{ marginBottom: '10px' }} onClick={() => setActiveComponent(4)} type={activeComponent === 4 ? "primary" : "default"}>Đổi mật khẩu</Button>
       </Sider>
       {activeComponent === 1 && <CategoryControl />}
+      {activeComponent === 2 && <ArticleManagement />}
       {activeComponent === 3 && <ChangeUserDetail />}
       {activeComponent === 4 && <ChangePassword />}
 

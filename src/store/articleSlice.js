@@ -23,6 +23,7 @@ const initialState = {
         currentPage: 1,
         totalPages: 2
     },
+    postList: null
 }
 
 const name = 'article';
@@ -69,7 +70,7 @@ export const fetchArticleBySlug = createAsyncThunk('ArticleSlug/fetchList',
         try {
             const response = await articleService.getBySlug(slug)
             const data = mappingArticleData(response.data[0]);
-            const responseRelated = await articleService.getByAuthor({exclude: data.id, author: data.authorId});
+            const responseRelated = await articleService.getByAuthor({ exclude: data.id, author: data.authorId });
             const dataRelated = responseRelated.data.map(mappingArticleData);
             return {
                 data,
@@ -83,7 +84,7 @@ export const fetchArticleBySlug = createAsyncThunk('ArticleSlug/fetchList',
 export const fetchArticleByAuthor = createAsyncThunk('RelatedPost/fetchList',
     async (obj, thunkAPI) => {
         try {
-            const response = await articleService.getByAuthor(obj[0],obj[1])
+            const response = await articleService.getByAuthor(obj[0], obj[1])
             const data = response.data.map(mappingArticleData)
             return {
                 data
@@ -121,6 +122,17 @@ export const fetchArticleByKeyword = createAsyncThunk('SearchPost/fetchList',
                 currentPage: obj[1],
                 totalPages: parseInt(response.headers["x-wp-totalpages"])
             }
+        } catch (err) {
+            console.log(err)
+        }
+    })
+
+export const fetchPostList = createAsyncThunk('postList/fetchList',
+    async (page, thunkAPI) => {
+        try {
+            const response = await articleService.getPostList(page)
+            const data = response.data.map(mappingArticleData)
+            return data
         } catch (err) {
             console.log(err)
         }
@@ -178,6 +190,11 @@ const articleSlice = createSlice({
                 state.byKeyword = {
                     ...action.payload,
                     list: action.payload.currentPage === 1 ? [...action.payload.list] : [...state.byKeyword.list, ...action.payload.list]
+                }
+            })
+            .addCase(fetchPostList.fulfilled, (state,action) => {
+                state.postList = {
+                    ...action.payload
                 }
             })
     }

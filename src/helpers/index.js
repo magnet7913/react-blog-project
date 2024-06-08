@@ -54,7 +54,8 @@ export function mappingUserData(item) {
     return {
         displayName: item.name,
         username: item.user_name,
-        avatar: item.simple_local_avatar[96],
+        avatar: item.simple_local_avatar.full,
+        avatar_id: item.simple_local_avatar.media_id,
         firstName: item.first_name,
         lastName: item.last_name,
         nickname: item.nickname,
