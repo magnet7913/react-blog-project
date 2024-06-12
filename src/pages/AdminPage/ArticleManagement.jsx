@@ -1,13 +1,15 @@
 import '../LoginPage/login.css'
 import { useNavigate } from "react-router-dom"
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Input from '../../components/shared/Input'
 import Button from '../../components/shared/Button'
 import mediaService from '../../services/mediaService'
 import PhotoUpload from '../../components/AntDesignProps/PhotoUpload'
 import Quill from 'quill'
+import ReactQuill from 'react-quill';
 import 'quill/dist/quill.snow.css'
+import { fetchAddNewPost, fetchPostList, fetchArticleBySlug, fetchDeletePost } from '../../store/articleSlice'
 
 function ArticleManagement() {
   const dispatch = useDispatch()
@@ -22,8 +24,19 @@ function ArticleManagement() {
 
   let postList = Object.values(useSelector((state) => state.ARTICLE.postList))
   let categoryList = Object.values(useSelector((state) => state.CATEGORY.categoryList));
+  let currentUser = useSelector((state) => state.LOGIN.user.userID)
 
   const quillRef = useRef()
+  let defaultForm = {
+    title: "",
+    content: "",
+    author: currentUser,
+    excerpt: "",
+    featured_media: "",
+    categories: [],
+    lang: "vi"
+  }
+  const [form, setForm] = useState(defaultForm)
 
   useEffect(() => {
     if (quillRef.current) {
@@ -33,12 +46,97 @@ function ArticleManagement() {
     }
   }, [])
 
+  const [mode, setMode] = useState("")
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    if (mode === "") {
+      dispatch(fetchAddNewPost(
+        {
+          token: token,
+          content: form
+        }
+      )).then((result) => {
+        if (result.payload) {
+          dispatch(fetchPostList())
+        }
+      })
+    } else {
+
+    }
+    formReset()
+  }
+
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  function handleContentChange(content, delta, source, editor) {
+    setForm({
+      ...form,
+      content: content
+    }
+    )
+  }
+
+  function handleCheckboxChange(e) {
+    if (e.target.checked) {
+      setForm(prevState => ({
+        ...prevState,
+        categories: [...prevState.categories, e.target.value]
+      }));
+    } else {
+      setForm(prevState => ({
+        ...prevState,
+        categories: prevState.categories.filter(categories => categories !== e.target.value)
+      }));
+    }
+  }
+
+  function handleEdit(e) {
+    dispatch(fetchArticleBySlug(e.target.value)).then((result) => {
+      if (result.payload) {
+        let i = result.payload.data
+        setMode(i.id)
+        setForm({
+          title: i.title,
+          content: i.content,
+          author: i.authorId,
+          excerpt: i.desc,
+          featured_media: "",
+          categories: i.category,
+          lang: "vi"
+        })
+      }
+    })
+  }
+  console.log(form)
+
+  function handleDelete(e) {
+    e.preventDefault()
+    dispatch(fetchDeletePost({
+      token: token,
+      id: e.target.id
+    })).then((result) => {
+      if (result.payload) {
+        dispatch(fetchPostList())
+      }
+    })
+  }
+
+  function formReset() {
+    setForm(defaultForm)
+  }
+
   return (
     <main className="login" style={{ width: '-webkit-fill-available' }}>
       <div className="spacing" />
       <div className="tcl-container">
         <div className="tcl-row">
-          <div className="tcl-col-12 tcl-col-sm-12 block-center">
+          <div className="tcl-col-12 tcl-col-sm-12 block-center"> {/* Danh sách bài viết */}
             <h1 className="form-title text-center">Quản lý bài viết</h1>
             <div style={{
               maxHeight: "20rem",
@@ -69,8 +167,8 @@ function ArticleManagement() {
                       <td>{item.author.nickname}</td>
                       <td>{item.postDate}</td>
                       <td>
-                        <Button type="primary" size="small" id={item.id}>Chỉnh sửa</Button>
-                        <Button type="primary" size="small" id={item.id}>Xóa</Button>
+                        <Button type="primary" size="small" id={item.id} value={item.slug} onClick={handleEdit}>Chỉnh sửa</Button>
+                        <Button type="primary" size="small" id={item.id} onClick={handleDelete}>Xóa</Button>
                       </td>
                     </tr>
                   ))}
@@ -79,7 +177,7 @@ function ArticleManagement() {
             </div>
           </div>
 
-          <div className="tcl-col-12 tcl-col-sm-12 block-center" style={{ marginTop: "4rem" }}>
+          <div className="tcl-col-12 tcl-col-sm-12 block-center" style={{ marginTop: "4rem" }}> {/* Form chỉnh sửa */}
             <h1 className="form-title text-center">Thêm / chỉnh sửa bài viết</h1>
             <div className="form-login-register">
               <form autoComplete="off">
@@ -88,24 +186,29 @@ function ArticleManagement() {
                   name="title"
                   label="Tiêu đề bài viết"
                   placeholder="Tiêu đề bài viết"
+                  value={form.title}
+                  onChange={handleChange}
                 />
 
                 <Input
-                  name="description"
+                  name="excerpt"
                   label="Miêu tả bài viết"
                   placeholder="Miêu tả bài viết"
+                  value={form.excerpt}
+                  onChange={handleChange}
                 />
 
                 <PhotoUpload />
 
                 <div className="ArticleManagement">
-                  <div ref={quillRef} style={{ minHeight: '10rem' }} />
+                  <ReactQuill onChange={handleContentChange} style={{ minHeight: '10rem' }} value={form.content} />
                 </div>
+
                 <div style={{ marginTop: "2rem" }}>
                   <label>Danh mục</label>
                   <div style={{
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(3, 1fr)', 
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
                     gap: '1rem',
                     maxHeight: "10rem",
                     overflow: "scroll",
@@ -113,7 +216,12 @@ function ArticleManagement() {
                   }}>
                     {categoryList.map((category) => (
                       <div key={category.ID}>
-                        <input type="checkbox" id={`category-${category.ID}`} name={category.name} value={category.name} style={{ marginRight: "0.5rem" }} />
+                        <input type="checkbox"
+                          id={`category-${category.ID}`}
+                          name={category.name}
+                          value={category.ID}
+                          style={{ marginRight: "0.5rem" }}
+                          onChange={handleCheckboxChange} />
                         <label htmlFor={`category-${category.ID}`}>{category.name}</label>
                       </div>
                     ))
@@ -122,7 +230,7 @@ function ArticleManagement() {
                 </div>
 
                 <div className="d-flex tcl-jc-between tcl-ais-center" style={{ marginTop: "2rem" }}>
-                  <Button htmlType="submit" type="primary" size="large">Thêm/chỉnh sửa bài viết</Button>
+                  <Button htmlType="submit" type="primary" size="large" onClick={handleSubmit}>Thêm/chỉnh sửa bài viết</Button>
                 </div>
               </form>
             </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from 'react-redux'
 import Input from '../../components/shared/Input'
 import Button from '../../components/shared/Button'
-import { fetchPostNewCategory, fetchCategoryList, fetchDeleteCategory } from '../../store/categorySlice'
+import { fetchPostNewCategory, fetchCategoryList, fetchDeleteCategory, fetchEditCategory } from '../../store/categorySlice'
 
 function CategoryControl() {
     let categoryList = Object.values(useSelector((state) => state.CATEGORY.categoryList));
@@ -17,15 +17,32 @@ function CategoryControl() {
         parent: ""
     })
 
+    const [mode, setMode] = useState("")
+
     const [selectAll, setSelectAll] = useState(false)
 
     function handleSubmit(e) {
         e.preventDefault()
-        dispatch(fetchPostNewCategory([token, form])).then((result) => {
-            if (result.payload) {
-                dispatch(fetchCategoryList())
-            }
-        })
+        if (mode === "") {
+            dispatch(fetchPostNewCategory([token, form])).then((result) => {
+                if (result.payload) {
+                    dispatch(fetchCategoryList())
+                }
+            })
+        } else {
+            dispatch(fetchEditCategory({
+                token: token,
+                content: {
+                    id: mode,
+                    content: form
+                }
+            })).then((result) => {
+                if (result.payload) {
+                    dispatch(fetchCategoryList())
+                }
+            })
+        }
+        handleClear()
     }
 
     function handleChange(e) {
@@ -49,7 +66,7 @@ function CategoryControl() {
             description: item.desc,
             parent: item.parent,
         })
-        
+        setMode(e.target.id)
     }
 
     function handleDelete(e) {
@@ -61,6 +78,15 @@ function CategoryControl() {
         })
     }
 
+    function handleClear() {
+        setForm({
+            name: "",
+            description: "",
+            parent: ""
+        })
+        setShowDropdown(false)
+        setMode("")
+    }
     useEffect(() => {
         if (form.parent !== 0 && form.parent !== "") {
             setShowDropdown(true)
@@ -68,7 +94,7 @@ function CategoryControl() {
             if (selectElement) {
                 selectElement.value = form.parent
             }
-        } else if (form.parent === 0) {setShowDropdown(false)}
+        } else if (form.parent === 0) { setShowDropdown(false) }
     }, [form.parent])
 
     return (
@@ -128,6 +154,7 @@ function CategoryControl() {
                             </div>
                             <div className="d-flex tcl-jc-between tcl-ais-center">
                                 <Button htmlType="submit" type="primary" size="large">Thêm mới/chỉnh sửa</Button>
+                                <Button htmlType="submit" type="primary" size="large" onClick={handleClear}>Hủy bỏ</Button>
                             </div>
                         </form>
                         <form >

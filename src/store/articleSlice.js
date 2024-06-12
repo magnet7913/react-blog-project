@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { mappingArticleData } from "../helpers";
+import { mappingArticleData, mappingMiniArticleData } from "../helpers";
 import articleService from "../services/articleService";
 
 const initialState = {
@@ -131,12 +131,38 @@ export const fetchPostList = createAsyncThunk('postList/fetchList',
     async (page, thunkAPI) => {
         try {
             const response = await articleService.getPostList(page)
-            const data = response.data.map(mappingArticleData)
+            const data = response.data.map(mappingMiniArticleData)
             return data
         } catch (err) {
             console.log(err)
         }
     })
+
+export const fetchAddNewPost = createAsyncThunk('postList/newPost',
+    async (payload, thunkAPI) => {
+        try {
+            const response = await articleService.addNewPost(payload)
+            const data = response.data
+            return data
+        } catch (err) {
+            console.log(err)
+        }
+    }
+)
+
+export const fetchDeletePost = createAsyncThunk('postList/delete',
+    async (payload, thunkAPI) => {
+        const response = await articleService.delete(payload)
+        return response
+    }
+)
+
+export const fetchEditPost = createAsyncThunk('postList/edit',
+    async (payload, thunkAPI) => {
+        const response = await articleService.edit(payload)
+        return response
+    }
+)
 
 const articleSlice = createSlice({
     name,

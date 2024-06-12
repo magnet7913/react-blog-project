@@ -29,6 +29,13 @@ export const fetchDeleteCategory = createAsyncThunk('category/delete',
     }
 )
 
+export const fetchEditCategory = createAsyncThunk('category/edit',
+    async (obj, thunkAPI) => {
+        const response = await categoryService.edit(obj.token,obj.content)
+        return response
+    }
+)
+
 const categorySlice = createSlice({
     name: 'category',
     initialState,
@@ -43,6 +50,9 @@ const categorySlice = createSlice({
             if (action.error.message === 'Request failed with status code 400') { state.error = "Có lỗi xảy ra" }
         })
         .addCase(fetchDeleteCategory.rejected, (state,action) => {
+            if (action.error.message === 'Request failed with status code 400') { state.error = "Có lỗi xảy ra" }
+        })
+        .addCase(fetchEditCategory.rejected, (state,action) => {
             if (action.error.message === 'Request failed with status code 400') { state.error = "Có lỗi xảy ra" }
         })
     }
