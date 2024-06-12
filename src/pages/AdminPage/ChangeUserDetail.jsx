@@ -24,36 +24,50 @@ function ChangeUserDetail() {
 
   const [file, setFile] = useState(null)
   const [form, setForm] = useState({
-    last_name: defaultInfo.lastName,
-    first_name: defaultInfo.firstName,
-    nickname: defaultInfo.nickname,
-    description: defaultInfo.description,
-    simple_local_avatar: { "media_id": defaultInfo.avatar_id }
+    last_name: defaultInfo?.lastName,
+    first_name: defaultInfo?.firstName,
+    nickname: defaultInfo?.nickname,
+    description: defaultInfo?.description,
+    avatar: defaultInfo?.avatar
+    // simple_local_avatar: { "media_id": defaultInfo?.avatar_id }
   })
+  
+  useEffect(() => {
+    if (defaultInfo) {
+      setForm({
+        last_name: defaultInfo?.lastName,
+        first_name: defaultInfo?.firstName,
+        nickname: defaultInfo?.nickname,
+        description: defaultInfo?.description,
+        avatar: defaultInfo?.avatar
+      })
+    }
+  }, [defaultInfo])
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (file === null) {
-      dispatch(fetchChangeUserDetail([token, form]))
-    }
+    // if (file === null) {
+    //   dispatch(fetchChangeUserDetail([token, form]))
+    // }
     const formData = new FormData();
     formData.append('file', file);
-    if (file === null) {
-      dispatch(fetchChangeUserDetail([token, form]))
-    } else {
-      mediaService.uploadImage(formData).then(result => {
-        setForm({
-          ...form,
-          simple_local_avatar: {
-            "media_id": result.data.id
-          }
-        })
-        dispatch(fetchChangeUserDetail([token, form]))
-      })
-      .catch(error => {
-        console.log(error)
-      })
-    }
+    dispatch(fetchChangeUserDetail([token, form, formData]))
+    // if (file === null) {
+    //   dispatch(fetchChangeUserDetail([token, form]))
+    // } else {
+    //   mediaService.uploadImage(formData).then(result => {
+    //     setForm({
+    //       ...form,
+    //       simple_local_avatar: {
+    //         "media_id": result.data.id
+    //       }
+    //     })
+    //     dispatch(fetchChangeUserDetail([token, form]))
+    //   })
+    //   .catch(error => {
+    //     console.log(error)
+    //   })
+    // }
 
   }
 
@@ -107,7 +121,7 @@ function ChangeUserDetail() {
                   onChange={handleChange}
                 />
 
-                <PhotoUpload currentUrl={defaultInfo.avatar} onFileUpload={handleFileUpload} />
+                <PhotoUpload currentUrl={form.avatar} onFileUpload={handleFileUpload} />
 
                 <div className="d-flex tcl-jc-between tcl-ais-center">
                   <Button htmlType="submit" type="primary" size="large">Lưu thay đổi</Button>

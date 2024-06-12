@@ -6,10 +6,12 @@ import Input from '../../components/shared/Input'
 import Button from '../../components/shared/Button'
 import mediaService from '../../services/mediaService'
 import PhotoUpload from '../../components/AntDesignProps/PhotoUpload'
-import Quill from 'quill'
 import ReactQuill from 'react-quill';
-import 'quill/dist/quill.snow.css'
+import 'react-quill/dist/quill.snow.css';
 import { fetchAddNewPost, fetchPostList, fetchArticleBySlug, fetchDeletePost } from '../../store/articleSlice'
+
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 function ArticleManagement() {
   const dispatch = useDispatch()
@@ -34,22 +36,18 @@ function ArticleManagement() {
     excerpt: "",
     featured_media: "",
     categories: [],
-    lang: "vi"
+    lang: "vi",
+    status: "publish"
   }
-  const [form, setForm] = useState(defaultForm)
 
-  useEffect(() => {
-    if (quillRef.current) {
-      new Quill(quillRef.current, {
-        theme: 'snow'
-      });
-    }
-  }, [])
+  const [form, setForm] = useState(defaultForm)
+  const [content, setContent] = useState('');
 
   const [mode, setMode] = useState("")
 
   function handleSubmit(e) {
     e.preventDefault()
+    console.log(form)
     if (mode === "") {
       dispatch(fetchAddNewPost(
         {
@@ -68,20 +66,18 @@ function ArticleManagement() {
   }
 
   function handleChange(e) {
+    console.log('handleChange');
     setForm({
       ...form,
       [e.target.name]: e.target.value
     })
   }
 
-  function handleContentChange(content, delta, source, editor) {
-    setForm({
-      ...form,
-      content: content
-    }
-    )
+  function handleContentChange(event, editor) {
+    setContent(editor.getData());
+    
   }
-
+console.log(content);
   function handleCheckboxChange(e) {
     if (e.target.checked) {
       setForm(prevState => ({
@@ -96,10 +92,11 @@ function ArticleManagement() {
     }
   }
 
-  function handleEdit(e) {
-    dispatch(fetchArticleBySlug(e.target.value)).then((result) => {
+  function handleEdit(slug) {
+    dispatch(fetchArticleBySlug(slug)).then((result) => {
       if (result.payload) {
         let i = result.payload.data
+        console.log('1. handleEdit data', i);
         setMode(i.id)
         setForm({
           title: i.title,
@@ -108,12 +105,14 @@ function ArticleManagement() {
           excerpt: i.desc,
           featured_media: "",
           categories: i.category,
-          lang: "vi"
+          lang: "vi",
+          status: "publish"
         })
+        setContent(i.content);
       }
     })
   }
-  console.log(form)
+  console.log('2. form', form)
 
   function handleDelete(e) {
     e.preventDefault()
@@ -167,7 +166,7 @@ function ArticleManagement() {
                       <td>{item.author.nickname}</td>
                       <td>{item.postDate}</td>
                       <td>
-                        <Button type="primary" size="small" id={item.id} value={item.slug} onClick={handleEdit}>Chỉnh sửa</Button>
+                        <Button type="primary" size="small" onClick={() => handleEdit(item.slug)}>Chỉnh sửa</Button>
                         <Button type="primary" size="small" id={item.id} onClick={handleDelete}>Xóa</Button>
                       </td>
                     </tr>
@@ -200,8 +199,17 @@ function ArticleManagement() {
 
                 <PhotoUpload />
 
-                <div className="ArticleManagement">
-                  <ReactQuill onChange={handleContentChange} style={{ minHeight: '10rem' }} value={form.content} />
+                {/* <div className="ArticleManagement">
+                  <ReactQuill theme="snow" onChange={handleContentChange} style={{ minHeight: '10rem' }} value={form.content} />
+                </div> */}
+
+                <div className="App">
+                  <h2>Using CKEditor&nbsp;5 build in React</h2>
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={content}
+                    onChange={(event, editor) => handleContentChange(event, editor)}
+                    />
                 </div>
 
                 <div style={{ marginTop: "2rem" }}>

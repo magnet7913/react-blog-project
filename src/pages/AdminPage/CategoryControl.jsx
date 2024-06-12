@@ -57,16 +57,14 @@ function CategoryControl() {
         const newData = ""
     }
 
-    function handleEdit(e) {
-        e.preventDefault()
-        const id = e.target.id;
+    function handleEdit(id) {
         const item = categoryList.find(item => item.ID === Number(id))
         setForm({
             name: item.name,
             description: item.desc,
             parent: item.parent,
         })
-        setMode(e.target.id)
+        setMode(id)
     }
 
     function handleDelete(e) {
@@ -87,14 +85,9 @@ function CategoryControl() {
         setShowDropdown(false)
         setMode("")
     }
+
     useEffect(() => {
-        if (form.parent !== 0 && form.parent !== "") {
-            setShowDropdown(true)
-            let selectElement = document.getElementById("pickParent")
-            if (selectElement) {
-                selectElement.value = form.parent
-            }
-        } else if (form.parent === 0) { setShowDropdown(false) }
+        setShowDropdown(form.parent !== 0 && form.parent !== "")
     }, [form.parent])
 
     return (
@@ -143,12 +136,13 @@ function CategoryControl() {
                                 {showDropdown && (
                                     <div style={{ marginLeft: '1rem' }}>
                                         <label>Thuộc danh mục</label>
-                                        <select id="pickParent" style={{ marginLeft: '1rem' }} onChange={handleChange} name="parent">
+                                        <select id="pickParent" style={{ marginLeft: '1rem' }} value={form.parent} onChange={handleChange} name="parent">
                                             <option value="">Lựa chọn danh mục</option>
                                             {categoryList.map(i => (
-                                                <option value={i.ID} key={i.ID}>{i.name}</option>
+                                                <option value={i.ID} key={i.ID}  >{i.name}</option>
                                             ))}
-                                        </select></div>
+                                        </select>
+                                    </div>
 
                                 )}
                             </div>
@@ -183,8 +177,8 @@ function CategoryControl() {
                                                 <td>{item.ID}</td>
                                                 <td>{item.name}</td>
                                                 <td>
-                                                    <Button type="primary" size="small" onClick={handleEdit} id={item.ID}>Chỉnh sửa</Button>
-                                                    <Button type="primary" size="small" onClick={handleDelete} id={item.ID}>Xóa</Button>
+                                                    <Button htmlType="button" type="primary" size="small" onClick={() => handleEdit(item.ID)}>Chỉnh sửa</Button>
+                                                    <Button htmlType="button" type="primary" size="small" onClick={handleDelete} id={item.ID}>Xóa</Button>
                                                 </td>
                                             </tr>
                                         ))}

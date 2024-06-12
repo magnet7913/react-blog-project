@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const PhotoUpload = (
     { currentUrl, onFileUpload }
 ) => {
     const [previewImage, setPreviewImage] = useState(currentUrl);
-
+    useEffect(() => {
+        if(currentUrl) {
+            setPreviewImage(currentUrl)
+        }
+    }, [currentUrl])
+    
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             let img = e.target.files[0];

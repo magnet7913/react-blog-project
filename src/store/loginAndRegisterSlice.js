@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { mappingUserData } from "../helpers"
 import loginAndRegisterService from "../services/loginAndRegisterService";
+import mediaService from '../services/mediaService'
 
 const initialState = {
     isLogin: false,
@@ -12,7 +13,7 @@ const initialState = {
 export const loginFetch = createAsyncThunk('user/login',
     async (userCredentials, thunkAPI) => {
         {
-            const {dispatch} = thunkAPI;
+            const { dispatch } = thunkAPI;
             const response = await loginAndRegisterService.getToken(userCredentials);
             const token = response.data.token
             localStorage.setItem('token', token)
@@ -49,15 +50,27 @@ export const currentUserFetch = createAsyncThunk('user/check',
 
 export const changePassword = createAsyncThunk('user/changePassword',
     async (obj, thunkAPI) => {
-        const response = await loginAndRegisterService.changePassword(obj[0],obj[1])
+        const response = await loginAndRegisterService.changePassword(obj[0], obj[1])
         return response
-})
+    })
 
 export const fetchChangeUserDetail = createAsyncThunk('user/changeDetail',
     async (obj, thunkAPI) => {
-        const response = await loginAndRegisterService.changeUserDetail(obj[0],obj[1])
+        try {
+            const formData = obj[2];
+        const userData = obj[1];
+        if (formData) {
+            const responseMedia = await mediaService.uploadImage(formData);
+            userData.simple_local_avatar = { "media_id": responseMedia.data.id }
+        }
+        const response = await loginAndRegisterService.changeUserDetail(obj[0], userData);
         return response
-})
+        } catch (error) {
+            console.log(error)
+        }
+        
+        
+    })
 
 const loginSlice = createSlice({
     name: 'login',
@@ -113,9 +126,9 @@ const loginSlice = createSlice({
                 state.user = action.payload
             })
             .addCase(changePassword.fulfilled, (state, action) => {
-                
+
             })
-            .addCase(changePassword.rejected, (state,action) => {
+            .addCase(changePassword.rejected, (state, action) => {
                 if (action.error.message === 'Request failed with status code 400') { state.error = "Sai mật khẩu cũ hoặc mật khẩu mới trùng lặp " }
             })
     }
