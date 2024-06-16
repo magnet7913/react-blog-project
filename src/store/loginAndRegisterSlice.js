@@ -31,13 +31,35 @@ export const logout = createAsyncThunk('user/logout',
 )
 
 export const registerFetch = createAsyncThunk('user/register',
-    async (userCredentials, thunkAPI) => {
-        {
+    async (userCredentials, { rejectWithValue }) => {
+        try {
             const response = await loginAndRegisterService.newRegister(userCredentials);
             const data = response.data
             localStorage.setItem('user', JSON.stringify(data))
             return data
+        } catch (error) {
+            const errorData = error.response.data;
+            let errorKey = '';
+            console.log(errorData);
+            if (errorData.code === "rest_user_invalid_email" || errorData.code === "existing_user_email") {
+                errorKey = 'email'
+            }
+
+            if (errorData.code === "rest_user_invalid_password") {
+                errorKey = 'password'
+            }
+            if (errorData.code === "rest_user_invalid_username") {
+                errorKey = 'username'
+            }
+
+            return rejectWithValue({
+                key: errorKey,
+                message: errorData.message
+            })
+
         }
+
+
     })
 
 export const currentUserFetch = createAsyncThunk('user/check',
@@ -58,18 +80,18 @@ export const fetchChangeUserDetail = createAsyncThunk('user/changeDetail',
     async (obj, thunkAPI) => {
         try {
             const formData = obj[2];
-        const userData = obj[1];
-        if (formData) {
-            const responseMedia = await mediaService.uploadImage(formData);
-            userData.simple_local_avatar = { "media_id": responseMedia.data.id }
-        }
-        const response = await loginAndRegisterService.changeUserDetail(obj[0], userData);
-        return response
+            const userData = obj[1];
+            if (formData) {
+                const responseMedia = await mediaService.uploadImage(formData);
+                userData.simple_local_avatar = { "media_id": responseMedia.data.id }
+            }
+            const response = await loginAndRegisterService.changeUserDetail(obj[0], userData);
+            return response
         } catch (error) {
             console.log(error)
         }
-        
-        
+
+
     })
 
 const loginSlice = createSlice({
@@ -119,8 +141,6 @@ const loginSlice = createSlice({
             .addCase(registerFetch.rejected, (state, action) => {
                 state.isLogin = false
                 state.user = null
-                if (action.error.message === 'Request failed with status code 500') { state.error = "Đăng ký thất bại, email hoặc username đã tồn tại!" }
-                else if (action.error.message === 'Request failed with status code 400') { state.error = "Bạn cần nhập đủ các mục!" }
             })
             .addCase(currentUserFetch.fulfilled, (state, action) => {
                 state.user = action.payload

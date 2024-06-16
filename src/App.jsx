@@ -3,6 +3,7 @@ import Footer from './components/Footer';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage'
+import LoginPage2 from './pages/LoginPage/index2'
 import PostDetailPage from './pages/PostDetailPage'
 import PostByCategoryPage from './pages/PostByCategory';
 import SearchPage from './pages/SearchPage'
@@ -10,6 +11,7 @@ import LogoutPage from './pages/LogoutPage';
 import RegisterPage from './pages/RegisterPage';
 import RegisterCompletePage from './pages/RegisteredCompletePage';
 import AdminPanel from './pages/AdminPage';
+import TestForm from './pages/Test/TestForm'
 
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
@@ -56,6 +58,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage></HomePage>}></Route>
         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
+        <Route path="/login2" element={<LoginPage2></LoginPage2>}></Route>
+
         <Route path="/post/:slug" element={<PostDetailPage></PostDetailPage>}></Route>
         <Route path="/cate/:slug" element={<PostByCategoryPage></PostByCategoryPage>}></Route>
         <Route path="/search?" element={<SearchPage></SearchPage>}></Route>
@@ -63,6 +67,7 @@ function App() {
         <Route path="/register" element={<RegisterPage></RegisterPage>}></Route>
         <Route path='/registerComplete' element={<RegisterCompletePage></RegisterCompletePage>}></Route>
         <Route path='/admin' element={<AdminPanel></AdminPanel>}></Route>
+        <Route path='/test' element={<TestForm></TestForm>}></Route>
 
       </Routes>
       <div className="spacing" />
