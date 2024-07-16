@@ -28,7 +28,9 @@ const schema = yup
   })
   .required()
 
-function ArticleManagement() {
+function ArticleManagement(
+  {setActiveComponent}
+) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -43,95 +45,12 @@ function ArticleManagement() {
   let categoryList = Object.values(useSelector((state) => state.CATEGORY.categoryList));
   let currentUser = useSelector((state) => state.LOGIN.user.userID)
 
-  const quillRef = useRef()
-  let defaultForm = {
-    title: "",
-    content: "",
-    author: currentUser,
-    excerpt: "",
-    featured_media: "",
-    categories: [],
-    lang: "vi",
-    status: "publish"
-  }
-
-  const [form, setForm] = useState(defaultForm)
-  const [content, setContent] = useState('');
-
-  const [mode, setMode] = useState("")
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setError,
-    formState: { errors },
-  } = useForm({
-    mode: 'onSubmit',
-    reValidateMode: 'onSubmit',
-    resolver: yupResolver(schema)
-  })
-
-  // function handleSubmit(e) {
-  //   e.preventDefault()
-  //   console.log(form)
-  //   if (mode === "") {
-  //     dispatch(fetchAddNewPost(
-  //       {
-  //         token: token,
-  //         content: form
-  //       }
-  //     )).then((result) => {
-  //       if (result.payload) {
-  //         dispatch(fetchPostList())
-  //       }
-  //     })
-  //   } else {
-
-  //   }
-  //   formReset()
-  // }
-
-  const onSubmit = (data) => {
-    console.log(data);
-    
-  }
-
-  function handleContentChange(event, editor) {
-    setContent(editor.getData());
-    
-  }
-  function handleCheckboxChange(e) {
-    if (e.target.checked) {
-      setForm(prevState => ({
-        ...prevState,
-        categories: [...prevState.categories, e.target.value]
-      }));
-    } else {
-      setForm(prevState => ({
-        ...prevState,
-        categories: prevState.categories.filter(categories => categories !== e.target.value)
-      }));
-    }
-  }
-
   function handleEdit(slug) {
     dispatch(fetchArticleBySlug(slug)).then((result) => {
       if (result.payload) {
-        let i = result.payload.data
-        console.log('1. handleEdit data', i);
-        setMode(i.id)
-        setForm({
-          title: i.title,
-          content: i.content,
-          author: i.authorId,
-          excerpt: i.desc,
-          featured_media: "",
-          categories: i.category,
-          lang: "vi",
-          status: "publish"
-        })
-        setContent(i.content);
+        let i = result.payload.data;
+        localStorage.setItem('currentArticle', JSON.stringify(i));
+        setActiveComponent(3)
       }
     })
   }
@@ -146,10 +65,6 @@ function ArticleManagement() {
         dispatch(fetchPostList())
       }
     })
-  }
-
-  function formReset() {
-    setForm(defaultForm)
   }
 
   return (
@@ -198,80 +113,6 @@ function ArticleManagement() {
             </div>
           </div>
 
-          <div className="tcl-col-12 tcl-col-sm-12 block-center" style={{ marginTop: "4rem" }}> {/* Form chỉnh sửa */}
-            <h1 className="form-title text-center">Thêm / chỉnh sửa bài viết</h1>
-            <div className="form-login-register">
-              <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-
-                <Input
-                  name="title"
-                  label="Tiêu đề bài viết"
-                  placeholder="Tiêu đề bài viết"
-                  // value={form.title}
-                  {...register("title")}
-                />
-                {errors.title && <span>{errors.title.message}</span>}
-
-                <Input
-                  name="excerpt"
-                  label="Miêu tả bài viết"
-                  placeholder="Miêu tả bài viết"
-                  // value={form.excerpt}
-                  {...register("excerpt")}
-                />
-                {errors.excerpt && <span>{errors.excerpt.message}</span>}
-
-                <PhotoUpload />
-
-                {/* <div className="ArticleManagement">
-                  <ReactQuill theme="snow" onChange={handleContentChange} style={{ minHeight: '10rem' }} value={form.content} />
-                </div> */}
-
-                <div className="App">
-                  <h2>Using CKEditor&nbsp;5 build in React</h2>
-                  <CKEditor
-                    editor={ClassicEditor}
-                    data={content}
-                    // onChange={(event, editor) => handleContentChange(event, editor)}
-                    {...register("content")}
-                    />
-                    {errors.content && <span>{errors.content.message}</span>}
-                </div>
-
-                <div style={{ marginTop: "2rem" }}>
-                  <label>Danh mục</label>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '1rem',
-                    maxHeight: "10rem",
-                    overflow: "scroll",
-                    marginTop: "1rem"
-                  }} >
-                    {categoryList.map((category) => (
-                      <div key={category.ID}>
-                        <input type="checkbox"
-                          id={`category-${category.ID}`}
-                          // name={category.name}
-                          value={category.ID}
-                          style={{ marginRight: "0.5rem" }}
-                          {...register("categories")}
-                          />
-                        <label htmlFor={`category-${category.ID}`}>{category.name}</label>
-                      </div>
-                    ))
-                    }
-                  </div>
-                  {errors.categories && <span>{errors.categories.message}</span>}
-                </div>
-
-                <div className="d-flex tcl-jc-between tcl-ais-center" style={{ marginTop: "2rem" }}>
-                  <Button htmlType="submit" type="primary" size="large">Thêm/chỉnh sửa bài viết</Button>
-                </div>
-              </form>
-            </div>
-
-          </div>
         </div>
       </div>
       <div className="spacing" />
